@@ -1,6 +1,10 @@
 # Compiled class file
 *.class
 
+#ucene
+.idea
+**/.mvn/
+
 # Log file
 *.log
 
