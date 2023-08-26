@@ -13,6 +13,9 @@ public class KafkaSettings {
   @Value("${kafka.groupId}")
   private String groupId;
 
+  @Value("${kafka.pollInterval}")
+  private Long pollInterval;
+
   public String getBootstrapAddress() {
     return bootstrapAddress;
   }
@@ -27,5 +30,13 @@ public class KafkaSettings {
 
   public void setGroupId(String groupId) {
     this.groupId = groupId;
+  }
+
+  public Long getPollInterval() {
+    return pollInterval;
+  }
+
+  public void setPollInterval(Long pollInterval) {
+    this.pollInterval = pollInterval;
   }
 }

@@ -33,7 +33,7 @@ public class KafkaTopicConfig {
 
   @Bean
   public NewTopic other() {
-    return TopicBuilder.name("OTHER")
+    return TopicBuilder.name("AUTHOR")
         .build();
   }
 }
