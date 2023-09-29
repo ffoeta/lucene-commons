@@ -1,16 +1,15 @@
-package com.example.kafka.config.wrappers;
+package com.example.kafka.wrappers;
 
-import com.example.kafka.model.KafkaMessage;
 import org.apache.kafka.clients.consumer.Consumer;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KafkaConsumerWrapper<T extends KafkaMessage> {
+public class KafkaConsumerWrapper{
   private static final Duration POOL_TIME = Duration.ofMillis(100);
-  Consumer<String, T> consumer;
+  Consumer<String, Long> consumer;
 
-  public KafkaConsumerWrapper(Consumer<String, T> consumer) {
+  public KafkaConsumerWrapper(Consumer<String, Long> consumer) {
     this.consumer = consumer;
   }
 
@@ -22,8 +21,8 @@ public class KafkaConsumerWrapper<T extends KafkaMessage> {
     consumer.unsubscribe();
   }
 
-  public List<T> poll() {
-    List<T> messages = new ArrayList<>();
+  public List<Long> poll() {
+    List<Long> messages = new ArrayList<>();
     for (var record : consumer.poll(POOL_TIME)) {
       messages.add(record.value());
     }

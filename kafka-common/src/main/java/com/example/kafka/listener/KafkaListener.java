@@ -1,35 +1,57 @@
 package com.example.kafka.listener;
 
-import com.example.kafka.config.wrappers.KafkaConsumerFactoryWrapper;
-import com.example.kafka.config.wrappers.KafkaConsumerWrapper;
-import com.example.kafka.model.KafkaMessage;
+import com.example.kafka.wrappers.KafkaConsumerFactoryWrapper;
+import com.example.kafka.wrappers.KafkaConsumerWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
 
-public abstract class KafkaListener<T extends KafkaMessage> {
-  private static final Logger LOGGER = LoggerFactory.getLogger(KafkaListener.class);
+import static com.example.kafka.config.KafkaCommonConfig.kafkaLogger;
+
+public class KafkaListener {
+  private final Logger logger = LoggerFactory.getLogger(kafkaLogger);
   private final String topic;
-  private final KafkaConsumerWrapper consumerWrapper;
-  protected KafkaListener(String topic, KafkaConsumerFactoryWrapper kafkaConsumerFactoryWrapper) {
+  private final KafkaConsumerWrapper consumer;
+  private final KafkaListenStrategy listenStrategy;
+  private KafkaListener(String topic, KafkaConsumerWrapper consumer, KafkaListenStrategy listenStrategy) {
     this.topic = topic;
-    this.consumerWrapper = kafkaConsumerFactoryWrapper.getConsumer();
+    this.consumer = consumer;
+    this.listenStrategy = listenStrategy;
   }
 
   @PostConstruct
   void subscribe() {
-    consumerWrapper.subscribe(topic);
+    consumer.subscribe(topic);
   }
 
   public void poll() {
-    onMessages(consumerWrapper.poll());
+    onMessages(consumer.poll());
   }
 
-  private void onMessages(List<T> messages) {
-    messages.forEach(this::onMessage);
+  private void onMessages(List<Long> messages) {
+    messages.forEach(listenStrategy::onMessage);
   }
 
-  protected abstract <T> void onMessage(T message);
+  public static class Builder {
+    private String topic;
+    private KafkaConsumerWrapper consumer;
+    private KafkaListenStrategy listenStrategy;
+
+    public static Builder factory(KafkaConsumerFactoryWrapper factory) {
+      var instance = new Builder();
+      instance.consumer = factory.getConsumer();
+      return instance;
+    }
+    public Builder topic(String topic) {
+      this.topic = topic;
+      return this;
+    }
+
+    public KafkaListener listen(KafkaListenStrategy listenStrategy) {
+      this.listenStrategy = listenStrategy;
+      return new KafkaListener(this.topic, this.consumer, listenStrategy);
+    }
+  }
 }

@@ -1,11 +1,10 @@
-package com.example.kafka.config.wrappers;
+package com.example.kafka.wrappers;
 
-import com.example.kafka.model.KafkaMessage;
 import org.springframework.kafka.core.ConsumerFactory;
 
 public class KafkaConsumerFactoryWrapper {
-  private final ConsumerFactory<String, KafkaMessage> factory;
-  public KafkaConsumerFactoryWrapper(ConsumerFactory<String, KafkaMessage> factory) {
+  private final ConsumerFactory<String, Long> factory;
+  public KafkaConsumerFactoryWrapper(ConsumerFactory<String, Long> factory) {
     this.factory = factory;
   }
 
